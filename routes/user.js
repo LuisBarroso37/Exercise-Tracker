@@ -3,7 +3,7 @@ const router = express.Router();
 const moment = require('moment');
 let userModel = require('../models/user.model');
 
-//Post request to get username submitted by the user
+// User story 1 - I can create a user by posting form data username to /api/exercise/new-user and returned will be an object with username and _id.
 router.post('/api/exercise/new-user', async (req, res) => {
   let username = req.body.username;
   
@@ -11,7 +11,7 @@ router.post('/api/exercise/new-user', async (req, res) => {
   let user = await userModel.findOne({ username });
   
     if (user) {
-      res.status(500).send('User already exists');
+      res.json('User already exists - id: ' + user._id);
     } else {
       let user = new userModel({
         username
@@ -20,7 +20,7 @@ router.post('/api/exercise/new-user', async (req, res) => {
       await user.save();
       
       let id = user._id;
-      res.send({ username, id });    
+      res.json({ username, id });    
     }
   } catch (err) {
     console.error(err);
@@ -28,7 +28,8 @@ router.post('/api/exercise/new-user', async (req, res) => {
     }
   });
 
-//POST REQUEST to add exercise data submitted by the user to an _id
+// User story 3 - I can add an exercise to any user by posting form data userId(_id), description, duration, and optionally date to /api/exercise/add.
+// If no date supplied it will use current date. Returned will be the user object with also with the exercise fields added.
 router.post('/api/exercise/add', (req, res) => {
   let userId = req.body.userId;
   let date = req.body.date;
@@ -52,7 +53,7 @@ router.post('/api/exercise/add', (req, res) => {
   .catch(err => res.status(400).json('Error: ' + err));
 });
 
-//GET request to get all users from databse
+// User story 2 - I can get an array of all users by getting api/exercise/users with the same info as when creating a user.
 router.get('/api/exercise/users', (req, res) =>{
     userModel.find()
     .then(users => 
@@ -63,10 +64,11 @@ router.get('/api/exercise/users', (req, res) =>{
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
-//GET request to get the full exercise log of an user via the _id
+// User story 4 - I can retrieve a full exercise log of any user by getting /api/exercise/log with a parameter of userId(_id).
+// Return will be the user object with added array log and count (total exercise count).
 router.get('/api/exercise/log', (req, res) => {
   let userId = req.query.userId;
-  let queries = {
+  let queries = { // User story 5
     from: req.query.from,
     to: req.query.to,
     limit: req.query.limit
@@ -74,7 +76,8 @@ router.get('/api/exercise/log', (req, res) => {
   
   userModel.findById({_id: userId})
   .then(user => {
-    //let exercises = user.exercise;
+    
+    // User story 5 - I can retrieve part of the log of any user by also passing along optional parameters of from & to or limit. (Date format yyyy-mm-dd, limit = int)
     if(queries.from && queries.to) {
       user.exercise = user.exercise.filter(key => key.date >= queries.from && key.date <= queries.to);
     } else if (queries.from) {

@@ -1,35 +1,161 @@
 <!DOCTYPE html>
 <html>
 
-   <head>
-      <title>Exercise Tracker | Free Code Camp</title>
-      <link rel="shortcut icon" href="https://cdn.hyperdev.com/us-east-1%3A52a203ff-088b-420f-81be-45bf559d01b1%2Ffavicon.ico" type="image/x-icon"/>
-      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
-      <link href="style.css" rel="stylesheet" type="text/css">
-   </head>
+  <head>
+    <title>Exercise Tracker</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+    <link href="style.css" rel="stylesheet" type="text/css">
+  </head>
 
-   <body>
-      <div class="container">
-         <h1>Exercise tracker</h1>
-          <form action="/api/exercise/new-user" method="post">
-            <h3>Create a New User</h3>
+  <body>
+    <div class="container">
+      <h1>Exercise tracker</h1>
+      
+        <div class="create-user-section">
+          <h3>Create a New User</h3>
+          <form class="user-form" action="/api/exercise/new-user" method="post">
             <p><code>POST /api/exercise/new-user</code></p>
-            <input id="uname" type="text" name="username" placeholder="username">
+            <label for="username">Username:</label>
+            <input id="name" type="text" name="username" required>
             <input type="submit" value="Submit">
           </form>
-          <form action="/api/exercise/add" method="post">
-            <h3>Add exercises</h3>
+        </div>
+
+        <div class="add-exercise-section">
+          <h3>Add exercises</h3>
+          <form class="exercise-form" action="/api/exercise/add" method="post">
             <p><code>POST /api/exercise/add</code></p>
-            <input id="uid" type="text" name="userId" placeholder="userId*">
-            <input id="desc" type="text" name="description" placeholder="description*">
-            <input id="dur" type="text" name="duration" placeholder="duration* (mins.)">
-            <input id="dat" type="text" name="date" placeholder="date (yyyy-mm-dd)">
+            <label for="userId">User ID:</label>
+            <input id="id" type="text" name="userId" required>
+            <label for="description">Description:</label>
+            <input id="description" type="text" name="description" required>
+            <label for="duration">Duration (in minutes):</label>
+            <input id="duration" type="number" min="1" name="duration" required>
+            <label for="date">Date:</label>
+            <input id="date" type="date" name="date">
             <input type="submit" value="Submit">
           </form>
-          <p><strong>GET users's exercise log: </strong><code>GET /api/exercise/log?{userId}[&amp;from][&amp;to][&amp;limit]</code></p>
-          <p><strong>{ }</strong> = required, <strong>[ ]</strong> = optional</p>
-          <p><strong>from, to</strong> = dates (yyyy-mm-dd); <strong>limit</strong> = number</p>
-      </div>
-   </body>
+        </div>
+        
+        <div class="all-users-section">
+          <input id="all-users" type="submit" value ="Click here to get all users">
+        </div>
+        
+        <div class="exercise-log-section">
+          <h3>Get user exercise log</h3>
+          <form class="exercise-log-form">
+            <p><code>GET /api/exercise/log</code></p>
+            <label for="userId">User ID:</label>
+            <input id="userId" type="text" name="userId" required>
+            <label for="from">From:</label>
+            <input id="from" type="date" name="from">
+            <label for="to">To:</label>
+            <input id="to" type="date" name="to">
+            <label for="limit">Maximum number of results:</label>
+            <input id="limit" type="number" name="limit">
+            <input type="submit" value="Submit">
+          </form>
+        </div>
+    </div>
+    
+    <script>
+      //POST Request - Add exercise
+      let exercise = document.createElement('pre');
+      document.querySelector('.add-exercise-section').appendChild(exercise);
+      exercise.className = "results";
+      exercise.style.display = "none";
+      
+      document.querySelector('.exercise-form').addEventListener('submit', e => {
+        e.preventDefault();
+        let userId = document.querySelector('#id').value;
+        let description = document.querySelector('#description').value;
+        let duration = document.querySelector('#duration').value;
+        let date = document.querySelector('#date').value;
+        
+        fetch('/api/exercise/add', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  userId,
+                  description,
+                  duration,
+                  date
+                })
+        })
+        .then(res => {
+          res.json().then(data => {
+            exercise.style.display = "";
+            exercise.innerText = JSON.stringify(data, null, 2);
+          })
+        })
+      })
+      
+      //POST Request - Create new user
+      let user = document.createElement('pre');
+      document.querySelector('.create-user-section').appendChild(user);
+      user.className = "results";
+      user.style.display = "none";
+      
+      document.querySelector('.user-form').addEventListener('submit', e => {
+        e.preventDefault();
+        let username = document.querySelector('#name').value;
+        
+        fetch('/api/exercise/new-user', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({username})
+        })
+        .then(res => {
+          res.json().then(data => {
+            user.style.display = "";
+            user.innerText = JSON.stringify(data, null, 2);
+          })
+        })
+      })
+      
+      //GET Request - Get all users
+      let button = document.querySelector('#all-users');
+      let users = document.createElement('pre');
+      document.querySelector('.all-users-section').appendChild(users);
+      users.className = "results";
+      users.style.display = "none";
+      
+      button.addEventListener('click', e => {
+        e.preventDefault();
+        fetch('/api/exercise/users')
+        .then(res => res.json())
+        .then(data => {
+          users.style.display = "";
+          users.innerText = JSON.stringify(data, null, 2);
+        })
+      })
+      
+      //GET Request - Get user exercise log
+      let exerciseLog = document.createElement('pre');
+      document.querySelector('.exercise-log-section').appendChild(exerciseLog);
+      exerciseLog.className = "results";
+      exerciseLog.style.display = "none";
+      
+      document.querySelector('.exercise-log-form').addEventListener('submit', e => {
+        e.preventDefault();
+        let userId = document.querySelector('#userId').value;
+        let from = document.querySelector('#from').value;
+        let to = document.querySelector('#to').value;
+        let limit = document.querySelector('#limit').value;
+        
+        fetch('/api/exercise/log' + '?userId=' + userId + '&from=' + from + '&to=' + to + '&limit=' + limit)
+        .then(res => res.json())
+        .then(data => {
+          exerciseLog.style.display = "";
+          exerciseLog.innerText = JSON.stringify(data, null, 2);
+        })
+      })
+    </script>
+    
+ </body>
 
 </html>

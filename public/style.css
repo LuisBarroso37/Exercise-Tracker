@@ -4,61 +4,102 @@
 }
 
 body {
-  font-family:sans-serif;
+  font-family: Roboto, sans-serif;
   margin: 25px;
   color: #222;
   background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 500px;
 }
 
 h1 {
-  font-weight: bold;
-  
+  text-align: center;
 }
 
-.bold {
-  font-weight: bold;
-}
-
-p {
-  max-width: 900px;
+h3 {
+  color: #5E9356;
+  font-size: 1.5rem;
+  position: relative;
+  top: 10px;
+  display: block;
+  text-align: left;
 }
 
 form {
   margin-bottom: 25px;
-  padding: 15px;
+  padding: 1em 2em 1em 2em;
   background-color: #87D37C;
-  display: inline-block;
   width: 100%;
-  max-width: 340px;
   border-radius: 5px;
 }
 
 input {
   display: block;
-  margin-bottom: 10px;
-  padding: 5px;
+  margin-bottom: 1.25em;
+  padding: .25em .5em;
   width: 100%;
   border: 1px solid lightgrey;
-  border-radius: 3px;
-  font-size: 16px;
+  border-radius: .3em;
+  font-size: 1rem;
+  font-family: sans-serif;
+  box-shadow: inset 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+input[type=number] {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
 }
 
 input[type=submit] {
   font-size: 16px;
   border-radius: 3px;
-  background-color: #E4F1FE;
-  border: 1px solid grey;
-  box-shadow: 2px 2px #999;
+  background-color: #e6e6e6;
+  border: 1px solid #e6e6e6;
+  width: 100px;
+  margin: 0 auto;
   cursor: pointer;
+  box-shadow: none;
+}
+
+input[required] {
+  background-image: url("https://findicons.com/files/icons/1583/silk_companion_1/16/asterisk_red.png");
+  background-repeat: no-repeat;
+  background-position: 98% 50%;
+  background-size: 0.5em; 
 }
 
 input[type=submit]:hover {
-  background-color: #FFFEC4;
+  background-color: #bfbfbf;
+  border: 1px #1a1a1a solid;
+}
+
+label {
+  position: relative;
+  bottom: 5px;
+  left: 5px;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 code {
   font-family: monospace;
-  font-size: 1.2em;
-  background-color: #FFFEC4;
-  padding: 2px;
+  font-size: .8em;
+  float: right;
+}
+
+#all-users {
+  border: 1px #1a1a1a solid;
+  width: 250px; 
+}
+
+.results {
+  padding: 1em 2em 1em 2em;
+  background-color: #87D37C;
+  border-radius: 5px;
+  max-width: 500px;
 }
